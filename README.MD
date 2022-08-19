@@ -9,7 +9,7 @@ accessKeyId 与 accessKeySecret会加密保存在本地。
 如果可以上传至项目，可以自己从 .gitignore 中删除。
 
 ```javascript
-// osskey 示例
+// osskey的内容示例
 // region  oss-cn-hangzhou
 // accessKeyId  accessKeyId
 // accessKeySecret  accessKeySecret
