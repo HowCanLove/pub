@@ -1,13 +1,13 @@
 {
   "name": "project-pub",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "打包并将结果上传至oss",
   "main": "index.js",
   "scripts": {
     "start": "node index"
   },
   "bin": {
-    "pub": "index"
+    "pub": "./bin/index.js"
   },
   "author": "liukai",
   "license": "ISC",
@@ -20,7 +20,6 @@
     "shelljs": "^0.8.5",
     "single-line-log": "^1.1.2"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HowCanLove/pub.git"

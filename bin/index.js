@@ -5,10 +5,10 @@ const OSS = require("ali-oss");
 const fs = require("fs");
 const readline = require("readline-sync");
 
-var ProgressBar = require("./utils/progress-bar");
-const { aseDecode, aseEncode } = require("./utils/ase");
+var ProgressBar = require("../utils/progress-bar");
+const { aseDecode, aseEncode } = require("../utils/ase");
 
-const { put, readdir, log } = require("./utils");
+const { put, readdir, log } = require("../utils");
 
 const { exec, echo } = shell;
 
