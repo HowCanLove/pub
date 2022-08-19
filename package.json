@@ -1,7 +1,7 @@
 {
   "name": "project-pub",
   "version": "0.0.1",
-  "description": "",
+  "description": "打包并将结果上传至oss",
   "main": "index.js",
   "scripts": {
     "start": "node index"
@@ -19,5 +19,15 @@
     "readline-sync": "^1.4.10",
     "shelljs": "^0.8.5",
     "single-line-log": "^1.1.2"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HowCanLove/pub.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/HowCanLove/pub/issues"
+  },
+  "homepage": "https://github.com/HowCanLove/pub#readme"
 }
