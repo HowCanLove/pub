@@ -1,0 +1,23 @@
+{
+  "name": "project-pub",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "bin": {
+    "pub": "index"
+  },
+  "author": "liukai",
+  "license": "ISC",
+  "dependencies": {
+    "ali-oss": "^6.17.1",
+    "crypto": "^1.0.1",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "readline-sync": "^1.4.10",
+    "shelljs": "^0.8.5",
+    "single-line-log": "^1.1.2"
+  }
+}
