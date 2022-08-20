@@ -1,10 +1,11 @@
 {
   "name": "project-pub",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "打包并将结果上传至oss",
   "main": "index.js",
   "scripts": {
-    "start": "node ./bin/index"
+    "start": "node ./bin/index",
+    "pub": "node ./publishPub.js"
   },
   "bin": {
     "pub": "./bin/index.js"
@@ -15,6 +16,7 @@
     "ali-oss": "^6.17.1",
     "crypto": "^1.0.1",
     "fs": "^0.0.1-security",
+    "moment": "^2.29.4",
     "path": "^0.12.7",
     "readline-sync": "^1.4.10",
     "shelljs": "^0.8.5",
