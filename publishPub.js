@@ -10,7 +10,7 @@ if (Array.isArray(versionLineMatch)) {
   const newVersionLine = versionLine.replace(/.d*"$/, `${nextVersion}"`);
   const newPackage = package.replace(versionLine, newVersionLine);
 
-  appendFileSync("./README.MD", `\n${newVersionLine.replace(/[^\d^.]/g, "")}-${moment().format("YYYY-MM-DD HH:mm:ss")}`);
+  appendFileSync("./README.MD", `\n${newVersionLine.replace(/[^\d^.]/g, "")}: ${moment().format("YYYY-MM-DD HH:mm:ss")}`);
   writeFileSync("./package.json", newPackage);
 
   exec("npm publish");
