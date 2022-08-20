@@ -4,7 +4,7 @@
   "description": "打包并将结果上传至oss",
   "main": "index.js",
   "scripts": {
-    "start": "node index"
+    "start": "node ./bin/index"
   },
   "bin": {
     "pub": "./bin/index.js"

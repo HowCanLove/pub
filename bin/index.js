@@ -11,6 +11,7 @@ const { aseDecode, aseEncode } = require("../utils/ase");
 const { put, readdir, log } = require("../utils");
 
 const { exec, echo } = shell;
+const type = (process.argv[2] || "").replace(/^-/, "");
 
 let client;
 let branch = "";
@@ -26,7 +27,7 @@ async function init() {
 
     const currentDir = dir.trim();
     // 判断 osskey 是否存在, 并且已经被配置过
-    const accessKeyPath = path.resolve(currentDir, "./.ossKey");
+    const accessKeyPath = path.resolve(currentDir, `./.ossKey${type ? `-${type}` : ""}`);
     const accessFile = fs.existsSync(accessKeyPath);
     if (!accessFile) {
       log("将创建 osskey 文件，您输入的内容会被加密保存在本地");
@@ -65,7 +66,7 @@ async function init() {
       const gitignorePath = path.resolve(currentDir, "./.gitignore");
       const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
       if (!gitignoreContent.includes(".ossKey\n")) {
-        fs.appendFileSync(gitignorePath, ".ossKey\n");
+        fs.appendFileSync(gitignorePath, ".ossKey*\n");
       }
       log("osskey 文件 已被git忽略，如果有需要可以自行从gitignore删除");
     }
