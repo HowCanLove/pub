@@ -1,19 +1,19 @@
-const shell = require("shelljs");
-const path = require("path");
-const fs = require("fs");
+import shell from "shelljs";
+import path from "path";
+import fs from "fs";
 
 // cmd打印 来点点效果
-const log = (text) => {
+export const log = (text) => {
   shell.echo("\n");
-  shell.echo("\033[" + (((Math.random() * 7) | 0) + 41) + ";31m " + text + " \033[0m");
+  shell.echo(text);
 };
 
 // 等待 *ms
-const wait = (time = 500) => new Promise((resolve) => setTimeout(resolve, time));
+export const wait = (time = 500) => new Promise((resolve) => setTimeout(resolve, time));
 
 // 读取文件夹内的文件
-function readdir(dirPath) {
-  const newDirPath = path.resolve(__dirname, dirPath);
+export function readdir(dirPath) {
+  const newDirPath = path.resolve(dirPath);
   return fs
     .readdirSync(newDirPath)
     .map((i) => {
@@ -30,7 +30,7 @@ function readdir(dirPath) {
 }
 
 // 上传文件
-function put(client, file, { uploadPath, branch }) {
+export function put(client, file, { uploadPath, branch }) {
   try {
     // 填写OSS文件完整路径和本地文件的完整路径。OSS文件完整路径中不能包含Bucket名称。
     // 如果本地文件的完整路径中未指定本地路径，则默认从示例程序所属项目对应本地路径中上传文件。
@@ -42,9 +42,4 @@ function put(client, file, { uploadPath, branch }) {
   }
 }
 
-module.exports = {
-  put,
-  log,
-  wait,
-  readdir,
-};
+export default {};

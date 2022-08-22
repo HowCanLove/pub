@@ -1,8 +1,8 @@
 // 这里用到一个很实用的 npm 模块，用以在同一行打印文本
-var slog = require("single-line-log").stdout;
+import { stdout } from "single-line-log";
 
 // 封装的 ProgressBar 工具
-function ProgressBar(description, bar_length) {
+export default function ProgressBar(description, bar_length) {
   // 两个基本参数(属性)
   this.description = description || "Progress"; // 命令行开头的文字信息
   this.length = bar_length || 25; // 进度条的长度(单位：字符)，默认设为 25
@@ -28,9 +28,6 @@ function ProgressBar(description, bar_length) {
     var cmdText = this.description + ": " + (100 * percent).toFixed(2) + "% " + cell + empty + " " + opts.completed + "/" + opts.total;
 
     // 在单行输出文本
-    slog(cmdText);
+    stdout(cmdText);
   };
 }
-
-// 模块导出
-module.exports = ProgressBar;

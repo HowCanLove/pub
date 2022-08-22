@@ -1,6 +1,6 @@
 {
   "name": "project-pub",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "打包并将结果上传至oss",
   "main": "index.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "ali-oss": "^6.17.1",
     "crypto": "^1.0.1",
     "fs": "^0.0.1-security",
+    "inquirer": "^9.1.0",
     "moment": "^2.29.4",
     "path": "^0.12.7",
     "readline-sync": "^1.4.10",
@@ -26,6 +27,7 @@
     "type": "git",
     "url": "git+https://github.com/HowCanLove/pub.git"
   },
+  "type": "module",
   "keywords": [],
   "bugs": {
     "url": "https://github.com/HowCanLove/pub/issues"

@@ -1,10 +1,10 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
 const key = Buffer.from("9vApxLk5G3PAsJrM", "utf8");
 const iv = Buffer.from("FnJL7EDzjqWjcaY9", "utf8");
 
 // 加密
-function aseEncode(src) {
+export function aseEncode(src) {
   let sign = "";
   const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
   sign += cipher.update(src, "utf8", "hex");
@@ -13,7 +13,7 @@ function aseEncode(src) {
 }
 
 // 解密
-function aseDecode(sign) {
+export function aseDecode(sign) {
   try {
     let src = "";
     const cipher = crypto.createDecipheriv("aes-128-cbc", key, iv);
@@ -24,7 +24,5 @@ function aseDecode(sign) {
     return "aseDecode Error";
   }
 }
-module.exports = {
-  aseEncode,
-  aseDecode,
-};
+
+export default {};

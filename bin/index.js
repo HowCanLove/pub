@@ -1,14 +1,13 @@
 #!/usr/bin/env node
-const shell = require("shelljs");
-const path = require("path");
-const OSS = require("ali-oss");
-const fs = require("fs");
-const readline = require("readline-sync");
+import shell from "shelljs";
+import path from "path";
+import OSS from "ali-oss";
+import fs from "fs";
+import inquirer from "inquirer";
 
-var ProgressBar = require("../utils/progress-bar");
-const { aseDecode, aseEncode } = require("../utils/ase");
-
-const { put, readdir, log } = require("../utils");
+import ProgressBar from "../utils/progress-bar.js";
+import { put, readdir, log } from "../utils/index.js";
+import { aseDecode, aseEncode } from "../utils/ase.js";
 
 const { exec, echo } = shell;
 const type = (process.argv[2] || "").replace(/^-/, "");
@@ -18,25 +17,59 @@ let branch = "";
 let resultDir = "";
 let uploadPath = "";
 
+const createOssKeyList = [
+  {
+    type: "input",
+    message: "输入region:",
+    name: "region",
+    default: "oss-cn-hangzhou",
+  },
+  {
+    type: "input",
+    message: "输入accessKeyId:",
+    name: "accessKeyId",
+    default: "",
+  },
+  {
+    type: "input",
+    message: "输入accessKeySecret:",
+    name: "accessKeySecret",
+    default: "",
+  },
+  {
+    type: "input",
+    message: "输入bucket:",
+    name: "bucket",
+    default: "",
+  },
+  {
+    type: "input",
+    message: "文件上传路径:",
+    name: "uploadPath",
+    default: "/",
+  },
+  {
+    type: "input",
+    message: "buildDir:",
+    name: "buildDir",
+    default: "build",
+  },
+];
+
 // 需要加密的2个字段
 const encryptionList = ["accessKeyId", "accessKeySecret"];
 async function init() {
   try {
     exec("git branch");
     const dir = exec("pwd");
-
     const currentDir = dir.trim();
     // 判断 osskey 是否存在, 并且已经被配置过
-    const accessKeyPath = path.resolve(currentDir, `./.ossKey${type ? `-${type}` : ""}`);
+    const accessKeyPath = path.resolve(currentDir + `/.ossKey${type ? `-${type}` : ""}`);
     const accessFile = fs.existsSync(accessKeyPath);
     if (!accessFile) {
       log("将创建 osskey 文件，您输入的内容会被加密保存在本地");
-      const region = readline.question("region(oss-cn-hangzhou): ") || "oss-cn-hangzhou";
-      const accessKeyId = readline.question("accessKeyId: ");
-      const accessKeySecret = readline.question("accessKeySecret: ");
-      const bucket = readline.question("bucket: ");
-      const uploadPath = readline.question("上传至bucket路径(/): ") || "/";
-      const buildDir = readline.question("buildDir(build): ") || "build";
+
+      const { region, accessKeyId, accessKeySecret, bucket, uploadPath, buildDir } = await inquirer.prompt(createOssKeyList);
 
       if (!accessKeyId) {
         log("accessKeyId 不能为空");
@@ -50,22 +83,32 @@ async function init() {
         log("bucket 不能为空");
         return;
       }
+      // bucket 前后不能有 /
+      let newBucket = bucket.replace(/^\//, "").replace(/\/$/, "");
       let text = `region=${region}\n`;
       text += `accessKeyId=${aseEncode(accessKeyId)}\n`;
       text += `accessKeySecret=${aseEncode(accessKeySecret)}\n`;
-      text += `bucket=${bucket}\n`;
+      text += `bucket=${newBucket}\n`;
       text += `buildDir=${buildDir.replace("/", "")}\n`;
-      text += `uploadPath=${uploadPath.replace(/\/+$/, "")}\n`;
+      text += `uploadPath=${uploadPath === "/" ? "/" : uploadPath.replace(/\/+$/, "")}\n`;
 
-      readline.question(`设置完成后，待编译结束，会将 ${buildDir || "build"} 文件夹的内容 上传至 /${bucket}${uploadPath}/分支名 下`);
+      let resultUploadPath = uploadPath.replace(/^\//, "").replace(/\/$/, "");
+      const { confirm } = await inquirer.prompt([
+        {
+          type: "confirm",
+          message: `设置完成后，待编译结束，会将 ${buildDir || "build"} 文件夹的内容 上传至 /${newBucket}${resultUploadPath ? `/${resultUploadPath}/` : ""}分支名 下`,
+          name: "confirm",
+        },
+      ]);
+      if (!confirm) return;
 
       fs.writeFileSync(accessKeyPath, text);
       log("osskey 文件 创建成功");
 
       // 将文件增加到gitignore里，防止提交到线上造成数据泄漏
-      const gitignorePath = path.resolve(currentDir, "./.gitignore");
+      const gitignorePath = path.resolve(currentDir + "/.gitignore");
       const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
-      if (!gitignoreContent.includes(".ossKey\n")) {
+      if (!gitignoreContent.includes(".ossKey*")) {
         fs.appendFileSync(gitignorePath, ".ossKey*\n");
       }
       log("osskey 文件 已被git忽略，如果有需要可以自行从gitignore删除");
@@ -88,20 +131,17 @@ async function init() {
     const errorOssConfig = Object.keys(ossConfig).find((key) => ossConfig[key] === "aseDecode Error");
 
     if (errorOssConfig) {
-      log("oss 配置出现异常，请重新配置");
       fs.unlinkSync(accessKeyPath);
-      exec("def");
+      log("oss 配置出现异常，已将.ossKey文件删除，请重新执行命令");
       return;
     } else {
       resultDir = ossConfig.buildDir;
       delete ossConfig.buildDir;
-      uploadPath = ossConfig.uploadPath;
-      if (!uploadPath.startsWith("/")) {
-        uploadPath = `/${uploadPath}`;
-      }
+      uploadPath = ossConfig.uploadPath.replace(/^\//, "").replace(/\/$/, "");
       delete ossConfig.uploadPath;
       client = new OSS(ossConfig);
     }
+
     branch = exec("git rev-parse --abbrev-ref HEAD");
     // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
     //   log("分支的格式必须为：feature/x.x.x");
@@ -116,7 +156,15 @@ async function init() {
     const checkNoCommit = gitStatus.includes("nothing to commit");
     if (!checkNoCommit) {
       exec("git add .");
-      const updateCommit = readline.question("更新内容(update: 更新): ") || "update: 更新";
+
+      const { updateCommit } = await inquirer.prompt([
+        {
+          type: "input",
+          message: "新内容:",
+          name: "updateCommit",
+          default: "update: 更新",
+        },
+      ]);
       exec(`git commit -m "${updateCommit}"`);
     }
     const pullResult = exec(`git pull origin ${branch}`);
@@ -144,7 +192,7 @@ async function init() {
     const list = files.map((i) => `https://${ossConfig.bucket}.${ossConfig.region}.aliyuncs.com/${uploadPath}/${branch}/${i.split("build/").pop()}`.replace(/\s/g, "")).join("\n");
     echo(list);
     echo("\n");
-    echo("\033[42;31m" + "发布结束" + " \033[0m");
+    log("发布结束");
   } catch (error) {
     log(error);
   }
