@@ -57,7 +57,7 @@ async function init() {
       text += `buildDir=${buildDir.replace("/", "")}\n`;
       text += `uploadPath=${uploadPath.replace(/\/+$/, "")}\n`;
 
-      readline.question(`设置完成后，待编译结束，会将 ${buildDir || "build"} 文件夹的内容 上传至 /${bucket}${uploadPath}/feature/x.x.x 下`);
+      readline.question(`设置完成后，待编译结束，会将 ${buildDir || "build"} 文件夹的内容 上传至 /${bucket}${uploadPath}/分支名 下`);
 
       fs.writeFileSync(accessKeyPath, text);
       log("osskey 文件 创建成功");
@@ -103,10 +103,28 @@ async function init() {
       client = new OSS(ossConfig);
     }
     branch = exec("git rev-parse --abbrev-ref HEAD");
-    if (/^feature\/\d+.\d+.\d+$/.test(branch)) {
-      log("分支的格式必须为：feature/x.x.x");
+    // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
+    //   log("分支的格式必须为：feature/x.x.x");
+    //   return;
+    // }
+    const gitStatus = exec("git status");
+    const checkNeedMerge = gitStatus.includes("git merge --abort");
+    if (checkNeedMerge) {
+      log("代码中有冲突，请先解决，并提交");
       return;
     }
+    const checkNoCommit = gitStatus.includes("nothing to commit");
+    if (!checkNoCommit) {
+      exec("git add .");
+      const updateCommit = readline.question("更新内容(update: 更新): ") || "update: 更新";
+      exec(`git commit -m "${updateCommit}"`);
+    }
+    const pullResult = exec(`git pull origin ${branch}`);
+    if (pullResult.includes("Merge conflict")) {
+      log("代码中有冲突，请先解决");
+      return;
+    }
+    exec(`git push origin ${branch}`);
 
     log("开始build");
     exec("npm run build");
