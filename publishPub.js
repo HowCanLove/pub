@@ -13,8 +13,8 @@ if (Array.isArray(versionLineMatch)) {
 
   const updateCommit = readline.question("更新内容(代码更新): ") || "代码更新";
 
-  appendFileSync("./README.MD", `\n${newVersionLine.replace(/[^\d^.]/g, "")}: ${moment().format("YYYY-MM-DD HH:mm:ss")}\n`);
-  appendFileSync("./README.MD", `\n更新内容: ${updateCommit}\n`);
+  appendFileSync("./README.MD", `${newVersionLine.replace(/[^\d^.]/g, "")}: ${moment().format("YYYY-MM-DD HH:mm:ss")}\n`);
+  appendFileSync("./README.MD", `更新内容: ${updateCommit}\n`);
   writeFileSync("./package.json", newPackage);
 
   exec("npm publish");
