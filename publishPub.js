@@ -23,8 +23,10 @@ async function pub() {
     const newPackage = packageResult.replace(versionLine, newVersionLine);
 
     const { updateCommit } = await inquirer.prompt(promptList);
-    appendFileSync("./README.MD", `${newVersionLine.replace(/[^\d^.]/g, "")}: ${moment().format("YYYY-MM-DD HH:mm:ss")}\n`);
-    appendFileSync("./README.MD", `更新内容: ${updateCommit}\n`);
+    if (updateCommit) {
+      appendFileSync("./README.MD", `${newVersionLine.replace(/[^\d^.]/g, "")}: ${moment().format("YYYY-MM-DD HH:mm:ss")}\n`);
+      appendFileSync("./README.MD", `更新内容: ${updateCommit}\n`);
+    }
     writeFileSync("./package.json", newPackage);
 
     exec("npm publish");
