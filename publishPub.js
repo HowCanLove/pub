@@ -9,7 +9,6 @@ const promptList = [
     type: "input",
     message: "更新内容:",
     name: "updateCommit",
-    default: "update: 代码更新", // 默认值
   },
 ];
 
@@ -32,7 +31,7 @@ async function pub() {
     exec("npm publish");
     exec("git status");
     exec("git add .");
-    exec(`git commit -m "${updateCommit}"`);
+    exec(`git commit -m "${updateCommit || "update"}"`);
     exec(`git push origin master`);
   }
 }
