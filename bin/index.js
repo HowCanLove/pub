@@ -28,19 +28,16 @@ const createOssKeyList = [
     type: "input",
     message: "输入accessKeyId:",
     name: "accessKeyId",
-    default: "",
   },
   {
     type: "input",
     message: "输入accessKeySecret:",
     name: "accessKeySecret",
-    default: "",
   },
   {
     type: "input",
     message: "输入bucket:",
     name: "bucket",
-    default: "",
   },
   {
     type: "input",

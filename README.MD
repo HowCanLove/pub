@@ -26,3 +26,5 @@ accessKeyId 与 accessKeySecret 会加密保存在本地。
 更新内容: 代码自动提交，遇到冲突自动暂停
 0.0.10: 2022-08-22 19:36:50
 更新内容: [object Object]
+0.0.11: 2022-08-23 09:29:51
+更新内容: [object Object]
