@@ -152,8 +152,6 @@ async function init() {
     }
     const checkNoCommit = gitStatus.includes("nothing to commit");
     if (!checkNoCommit) {
-      exec("git add .");
-
       const { updateCommit } = await inquirer.prompt([
         {
           type: "input",
@@ -162,6 +160,7 @@ async function init() {
           default: "update: 更新",
         },
       ]);
+      exec("git add .");
       exec(`git commit -m "${updateCommit}"`);
     }
     const pullResult = exec(`git pull origin ${branch}`);
