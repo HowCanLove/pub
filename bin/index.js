@@ -181,7 +181,7 @@ async function init() {
     var bar = new ProgressBar("上传进度", 50);
     log(`准备上传到oss 总共${total}个文件`);
     for (let i = 0; i < files.length; i++) {
-      await put(client, files[i], { uploadPath, branch });
+      await put(client, files[i], { uploadPath, branch, resultDir });
       bar.render({ completed: i + 1, total: total });
     }
     echo("\n");
