@@ -185,7 +185,7 @@ async function init() {
       bar.render({ completed: i + 1, total: total });
     }
     echo("\n");
-    const list = files.map((i) => `https://${ossConfig.bucket}.${ossConfig.region}.aliyuncs.com/${uploadPath}/${branch}/${i.split("build/").pop()}`.replace(/\s/g, "")).join("\n");
+    const list = files.map((i) => `https://${ossConfig.bucket}.${ossConfig.region}.aliyuncs.com/${uploadPath}/${branch}/${i.split(`${resultDir}/`).pop()}`.replace(/\s/g, "")).join("\n");
     echo(list);
     echo("\n");
     log("发布结束");

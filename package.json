@@ -1,6 +1,6 @@
 {
   "name": "project-pub",
-  "version": "0.0.19",
+  "version": "0.0.110",
   "description": "打包并将结果上传至oss",
   "main": "index.js",
   "scripts": {
