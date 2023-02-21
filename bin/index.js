@@ -152,7 +152,7 @@ async function init() {
     }
     const checkNoCommit = gitStatus.includes("nothing to commit");
     if (!checkNoCommit) {
-      const { updateCommit } = await inquirer.prompt([
+      let { updateCommit } = await inquirer.prompt([
         {
           type: "input",
           message: "新内容:",
@@ -160,8 +160,12 @@ async function init() {
           default: "update: 更新",
         },
       ]);
+      // 判断更新内容是否带有前缀，没有前缀的话增加update: 前缀
+      if (!/[a-z,A-Z]+[\:：]/.test(updateCommit)) {
+        updateCommit = "update: " + updateCommit;
+      }
       exec("git add .");
-      exec(`git commit -m "${updateCommit}"`);
+      exec(`git commit -m "${updateCommit.replace(/：/g, ":")}"`);
     }
     const pullResult = exec(`git pull origin ${branch}`);
     if (pullResult.includes("Merge conflict")) {
