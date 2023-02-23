@@ -106,7 +106,7 @@ async function init() {
       const gitignorePath = path.resolve(currentDir + "/.gitignore");
       const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
       if (!gitignoreContent.includes(".ossKey*")) {
-        fs.appendFileSync(gitignorePath, ".ossKey*\n");
+        fs.appendFileSync(gitignorePath, "\n.ossKey*\n");
       }
       log("osskey 文件 已被git忽略，如果有需要可以自行从gitignore删除");
     }
