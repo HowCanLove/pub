@@ -30,13 +30,14 @@ export function readdir(dirPath) {
 }
 
 // 上传文件
-export function put(client, file, { uploadPath, branch, buildDir = "build" }) {
+export function put(client, file, { uploadPath, branch, resultDir = "build" }) {
   try {
     // 填写OSS文件完整路径和本地文件的完整路径。OSS文件完整路径中不能包含Bucket名称。
     // 如果本地文件的完整路径中未指定本地路径，则默认从示例程序所属项目对应本地路径中上传文件。
+    // console.log(resultDir);
     // console.log(`/dev/${branch}/${file.split("build/").pop()}`.replace(/\s/g, ""));
-    // console.log(`${uploadPath}/${branch}/${file.split("build/").pop()}`.replace(/\s/g, ""));
-    return client.put(`${uploadPath}/${branch}/${file.split(`${buildDir}/`).pop()}`.replace(/\s/g, ""), path.normalize(file));
+    // console.log(`${uploadPath}/${branch}/${file.split(`${resultDir}/`).pop()}`.replace(/\s/g, ""));
+    return client.put(`${uploadPath}/${branch}/${file.split(`${resultDir}/`).pop()}`.replace(/\s/g, ""), path.normalize(file));
   } catch (e) {
     console.log(e);
   }

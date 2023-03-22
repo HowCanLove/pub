@@ -46,6 +46,12 @@ const createOssKeyList = [
     default: "/",
   },
   {
+    type: "confirm",
+    message: "oss文件上传路径是否仅包含版本号，Y：x.x.x，N: 您完整的分支号 || feature/x.x.x || daily/x.x.x",
+    name: "onlyBranch",
+    default: false,
+  },
+  {
     type: "input",
     message: "buildDir:",
     name: "buildDir",
@@ -66,7 +72,7 @@ async function init() {
     if (!accessFile) {
       log("将创建 osskey 文件，您输入的内容会被加密保存在本地");
 
-      const { region, accessKeyId, accessKeySecret, bucket, uploadPath, buildDir } = await inquirer.prompt(createOssKeyList);
+      const { region, accessKeyId, accessKeySecret, bucket, uploadPath, buildDir, onlyBranch } = await inquirer.prompt(createOssKeyList);
 
       if (!accessKeyId) {
         log("accessKeyId 不能为空");
@@ -87,6 +93,7 @@ async function init() {
       text += `accessKeySecret=${aseEncode(accessKeySecret)}\n`;
       text += `bucket=${newBucket}\n`;
       text += `buildDir=${buildDir.replace("/", "")}\n`;
+      text += `onlyBranch=${onlyBranch ? 'true' : 'false'}\n`;
       text += `uploadPath=${uploadPath === "/" ? "/" : uploadPath.replace(/\/+$/, "")}\n`;
 
       let resultUploadPath = uploadPath.replace(/^\//, "").replace(/\/$/, "");
@@ -105,7 +112,7 @@ async function init() {
       // 将文件增加到gitignore里，防止提交到线上造成数据泄漏
       const gitignorePath = path.resolve(currentDir + "/.gitignore");
       const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
-      if (!gitignoreContent.includes(".ossKey*")) {
+      if (!gitignoreContent.includes(".ossKey")) {
         fs.appendFileSync(gitignorePath, "\n.ossKey*\n");
       }
       log("osskey 文件 已被git忽略，如果有需要可以自行从gitignore删除");
@@ -140,6 +147,9 @@ async function init() {
     }
 
     branch = exec("git rev-parse --abbrev-ref HEAD");
+    if(ossConfig.onlyBranch === "true") {
+      branch = branch.replace(/[^\d\.]+/g, '')
+    }
     // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
     //   log("分支的格式必须为：feature/x.x.x");
     //   return;

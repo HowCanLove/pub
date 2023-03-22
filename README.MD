@@ -15,6 +15,7 @@ accessKeyId 与 accessKeySecret 会加密保存在本地。
 // accessKeyId  accessKeyId
 // accessKeySecret  accessKeySecret
 // bucket  bucketName
+// onlyBranch false 是否只包含版本号，否的话，上传其中的路径是 daily/x.x.x或者 feature/x.x.x，如果设置为true，则上传其中的版本路径为x.x.x
 // uploadPath bucket下的地址
 // buildDir 构建的目录 dist ｜ build
 ```
@@ -35,3 +36,5 @@ accessKeyId 与 accessKeySecret 会加密保存在本地。
   
 0.0.111 ---------- 2023-02-21 11:11:34  
 更新内容: 提交内容可以不写前缀，会自动增加 update: 的前缀  
+0.0.113 ---------- 2023-03-22 17:30:00  
+更新内容: 增加onlyBranch字段  
