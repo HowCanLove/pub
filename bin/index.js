@@ -147,9 +147,7 @@ async function init() {
     }
 
     branch = exec("git rev-parse --abbrev-ref HEAD");
-    if(ossConfig.onlyBranch === "true") {
-      branch = branch.replace(/[^\d\.]+/g, '')
-    }
+    
     // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
     //   log("分支的格式必须为：feature/x.x.x");
     //   return;
@@ -190,7 +188,9 @@ async function init() {
 
     const files = readdir(currentDir + "/" + resultDir);
     const total = files.length;
-
+    if(ossConfig.onlyBranch === "true") {
+      branch = branch.replace(/[^\d\.]+/g, '')
+    }
     echo("\n");
     var bar = new ProgressBar("上传进度", 50);
     log(`准备上传到oss 总共${total}个文件`);
