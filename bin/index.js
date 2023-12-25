@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-import shell from "shelljs";
-import path from "path";
 import OSS from "ali-oss";
 import fs from "fs";
 import inquirer from "inquirer";
+import path from "path";
+import shell from "shelljs";
 
-import ProgressBar from "../utils/progress-bar.js";
-import { put, readdir, log } from "../utils/index.js";
 import { aseDecode, aseEncode } from "../utils/ase.js";
+import { log, put, readdir } from "../utils/index.js";
+import ProgressBar from "../utils/progress-bar.js";
 
 const { exec, echo } = shell;
 const type = (process.argv[2] || "").replace(/^-/, "");
@@ -165,7 +165,7 @@ async function init() {
           type: "input",
           message: "新内容:",
           name: "updateCommit",
-          default: "update: 更新",
+          default: "update: 样式更新",
         },
       ]);
       // 判断更新内容是否带有前缀，没有前缀的话增加update: 前缀
