@@ -1,38 +1,38 @@
 {
-  "name": "project-pub",
-  "version": "0.0.115",
-  "description": "打包并将结果上传至oss",
-  "main": "index.js",
-  "scripts": {
-    "start": "node ./bin/index",
-    "pub": "node ./publishPub.js"
-  },
-  "bin": {
-    "pub": "./bin/index.js"
-  },
-  "author": "liukai",
-  "license": "ISC",
-  "dependencies": {
-    "ali-oss": "^6.17.1",
-    "crypto": "^1.0.1",
-    "fs": "^0.0.1-security",
-    "inquirer": "^9.1.0",
-    "moment": "^2.29.4",
-    "path": "^0.12.7",
-    "shelljs": "^0.8.5",
-    "single-line-log": "^1.1.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/HowCanLove/pub.git"
-  },
-  "type": "module",
-  "keywords": [
-    "node",
-    "pub"
-  ],
-  "bugs": {
-    "url": "https://github.com/HowCanLove/pub/issues"
-  },
-  "homepage": "https://github.com/HowCanLove/pub#readme"
+	"name": "project-pub",
+	"version": "0.0.116",
+	"description": "打包并将结果上传至oss",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./bin/index",
+		"pub": "node ./publishPub.js"
+	},
+	"bin": {
+		"pub": "./bin/index.js"
+	},
+	"author": "liukai",
+	"license": "ISC",
+	"dependencies": {
+		"ali-oss": "^6.17.1",
+		"crypto": "^1.0.1",
+		"fs": "^0.0.1-security",
+		"inquirer": "^9.1.0",
+		"moment": "^2.29.4",
+		"path": "^0.12.7",
+		"shelljs": "^0.8.5",
+		"single-line-log": "^1.1.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/HowCanLove/pub.git"
+	},
+	"type": "module",
+	"keywords": [
+		"node",
+		"pub"
+	],
+	"bugs": {
+		"url": "https://github.com/HowCanLove/pub/issues"
+	},
+	"homepage": "https://github.com/HowCanLove/pub#readme"
 }
