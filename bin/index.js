@@ -147,40 +147,49 @@ async function init() {
     }
 
     branch = exec("git rev-parse --abbrev-ref HEAD");
-    
-    // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
-    //   log("分支的格式必须为：feature/x.x.x");
-    //   return;
-    // }
-    const gitStatus = exec("git status");
-    const checkNeedMerge = gitStatus.includes("git merge --abort");
-    if (checkNeedMerge) {
-      log("代码中有冲突，请先解决，并提交");
-      return;
-    }
-    const checkNoCommit = gitStatus.includes("nothing to commit");
-    if (!checkNoCommit) {
-      let { updateCommit } = await inquirer.prompt([
-        {
-          type: "input",
-          message: "新内容:",
-          name: "updateCommit",
-          default: "update: 样式更新",
-        },
-      ]);
-      // 判断更新内容是否带有前缀，没有前缀的话增加update: 前缀
-      if (!/[a-z,A-Z]+[\:：]/.test(updateCommit)) {
-        updateCommit = "update: " + updateCommit;
+    const { pushCode } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "是否提交代码",
+        default: true,
+      },
+    ]);
+
+    if (pushCode) {
+      // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
+      //   log("分支的格式必须为：feature/x.x.x");
+      //   return;
+      // }
+      const gitStatus = exec("git status");
+      const checkNeedMerge = gitStatus.includes("git merge --abort");
+      if (checkNeedMerge) {
+        log("代码中有冲突，请先解决，并提交");
+        return;
       }
-      exec("git add .");
-      exec(`git commit -m "${updateCommit.replace(/：/g, ":")}"`);
+      const checkNoCommit = gitStatus.includes("nothing to commit");
+      if (!checkNoCommit) {
+        let { updateCommit } = await inquirer.prompt([
+          {
+            type: "input",
+            message: "新内容:",
+            name: "updateCommit",
+            default: "update: 样式更新",
+          },
+        ]);
+        // 判断更新内容是否带有前缀，没有前缀的话增加update: 前缀
+        if (!/[a-z,A-Z]+[\:：]/.test(updateCommit)) {
+          updateCommit = "update: " + updateCommit;
+        }
+        exec("git add .");
+        exec(`git commit -m "${updateCommit.replace(/：/g, ":")}"`);
+      }
+      const pullResult = exec(`git pull origin ${branch}`);
+      if (pullResult.includes("Merge conflict")) {
+        log("代码中有冲突，请先解决");
+        return;
+      }
+      exec(`git push origin ${branch}`);
     }
-    const pullResult = exec(`git pull origin ${branch}`);
-    if (pullResult.includes("Merge conflict")) {
-      log("代码中有冲突，请先解决");
-      return;
-    }
-    exec(`git push origin ${branch}`);
 
     log("开始build");
     exec("npm run build");
