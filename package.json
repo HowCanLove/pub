@@ -24,7 +24,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/HowCanLove/pub.git"
+		"url": "git@github.com:HowCanLove/pub.git"
 	},
 	"type": "module",
 	"keywords": [
