@@ -52,6 +52,12 @@ const createOssKeyList = [
     default: false,
   },
   {
+    type: "confirm",
+    message: "每次执行前是否需要检查代码提交，false表示不提交",
+    name: "pushCode",
+    default: true,
+  },
+  {
     type: "input",
     message: "buildDir:",
     name: "buildDir",
@@ -147,15 +153,8 @@ async function init() {
     }
 
     branch = exec("git rev-parse --abbrev-ref HEAD");
-    const { pushCode } = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "是否提交代码",
-        default: true,
-      },
-    ]);
 
-    if (pushCode) {
+    if (ossConfig.pushCode !== "false") {
       // if (!/^feature\/\d+.\d+.\d+$/.test(branch)) {
       //   log("分支的格式必须为：feature/x.x.x");
       //   return;
