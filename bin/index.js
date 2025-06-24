@@ -194,23 +194,25 @@ async function init() {
     exec("npm run build");
     log("build结束");
 
-    const files = readdir(currentDir + "/" + resultDir);
-    const total = files.length;
-    if(ossConfig.onlyBranch === "true") {
-      branch = branch.replace(/[^\d\.]+/g, '')
-    }
-    echo("\n");
-    var bar = new ProgressBar("上传进度", 50);
-    log(`准备上传到oss 总共${total}个文件`);
-    for (let i = 0; i < files.length; i++) {
-      await put(client, files[i], { uploadPath, branch, resultDir });
-      bar.render({ completed: i + 1, total: total });
-    }
-    echo("\n");
-    const list = files.map((i) => `https://${ossConfig.bucket}.${ossConfig.region}.aliyuncs.com/${uploadPath}/${branch ? `${branch}/` : ''}${i.split(`${resultDir}/`).pop()}`.replace(/\s/g, "")).join("\n");
-    echo(list);
-    echo("\n");
-    log("发布结束");
+    setTimeout(async () => {
+      const files = readdir(currentDir + "/" + resultDir);
+      const total = files.length;
+      if(ossConfig.onlyBranch === "true") {
+        branch = branch.replace(/[^\d\.]+/g, '')
+      }
+      echo("\n");
+      var bar = new ProgressBar("上传进度", 50);
+      log(`准备上传到oss 总共${total}个文件`);
+      for (let i = 0; i < files.length; i++) {
+        await put(client, files[i], { uploadPath, branch, resultDir });
+        bar.render({ completed: i + 1, total: total });
+      }
+      echo("\n");
+      const list = files.map((i) => `https://${ossConfig.bucket}.${ossConfig.region}.aliyuncs.com/${uploadPath}/${branch ? `${branch}/` : ''}${i.split(`${resultDir}/`).pop()}`.replace(/\s/g, "")).join("\n");
+      echo(list);
+      echo("\n");
+      log("发布结束");
+    }, 1000)
   } catch (error) {
     log(error);
   }
