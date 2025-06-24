@@ -37,7 +37,7 @@ export function put(client, file, { uploadPath, branch, resultDir = "build" }) {
     // console.log(resultDir);
     // console.log(`/dev/${branch}/${file.split("build/").pop()}`.replace(/\s/g, ""));
     // console.log(`${uploadPath}/${branch}/${file.split(`${resultDir}/`).pop()}`.replace(/\s/g, ""));
-    return client.put(`${uploadPath}/${branch}/${file.split(`${resultDir}/`).pop()}`.replace(/\s/g, ""), path.normalize(file));
+    return client.put(`${uploadPath}/${branch ? `${branch}/` : ''}${file.split(`${resultDir}/`).pop()}`.replace(/\s/g, ""), path.normalize(file));
   } catch (e) {
     console.log(e);
   }
