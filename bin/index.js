@@ -199,6 +199,9 @@ async function init() {
     if(ossConfig.onlyBranch === "true") {
       branch = branch.replace(/[^\d\.]+/g, '')
     }
+    if (ossConfig.branch) {
+      branch = ossConfig.branch;
+    }
     echo("\n");
     var bar = new ProgressBar("上传进度", 50);
     log(`准备上传到oss 总共${total}个文件`);
