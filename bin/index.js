@@ -78,7 +78,6 @@ async function init() {
     exec("git branch");
     const dir = exec("pwd");
     const currentDir = dir.trim();
-    console.log('paths.cache', paths.cache)
     await storage.init({ dir: paths.cache });
     // 判断 osskey 是否存在, 并且已经被配置过
     const accessKeyPath = path.resolve(currentDir + `/.ossKey${type ? `-${type}` : ""}`);
