@@ -4,6 +4,12 @@ import fs from "fs";
 import inquirer from "inquirer";
 import path from "path";
 import shell from "shelljs";
+import storage from "node-persist";
+import envPaths from "env-paths";
+
+const paths = envPaths("project-pub");
+
+fs.mkdirSync(paths.cache, { recursive: true });
 
 import { aseDecode, aseEncode } from "../utils/ase.js";
 import { log, put, readdir } from "../utils/index.js";
@@ -72,6 +78,7 @@ async function init() {
     exec("git branch");
     const dir = exec("pwd");
     const currentDir = dir.trim();
+    await storage.init({ dir: paths.cache });
     // 判断 osskey 是否存在, 并且已经被配置过
     const accessKeyPath = path.resolve(currentDir + `/.ossKey${type ? `-${type}` : ""}`);
     const accessFile = fs.existsSync(accessKeyPath);
@@ -190,25 +197,40 @@ async function init() {
       exec(`git push origin ${branch}`);
     }
 
-    log("开始build");
-    exec("npm run build");
-    log("build结束");
-
-    const files = readdir(currentDir + "/" + resultDir);
-    const total = files.length;
     if(ossConfig.onlyBranch === "true") {
       branch = branch.replace(/[^\d\.]+/g, '')
     }
     if (ossConfig.branch) {
       branch = ossConfig.branch;
     }
+
+    const tempVersion = currentDir + "/" + resultDir + "-" + branch;
+    // 查询 当前版本 上次发布的时间
+    const lastTime = (await storage.getItem(tempVersion)) ?? 0;
+
+    log("开始build");
+    exec("npm run build");
+    log("build结束");
+
+    const files = [];
+    const allFiles = readdir(currentDir + "/" + resultDir);
+    for (let i = 0; i < allFiles.length; i++) {
+      const stat = fs.statSync(allFiles[i]);
+      const time = stat.mtime.getTime();
+      // 对比文件的修改时间和上次修改的时间，只上传有修改的文件
+      if (time > lastTime) {
+        files.push(allFiles[i]);
+      }
+    }
+    const total = files.length;
     echo("\n");
     var bar = new ProgressBar("上传进度", 50);
     log(`准备上传到oss 总共${total}个文件`);
-    for (let i = 0; i < files.length; i++) {
+    for (let i = 0; i < total; i++) {
       await put(client, files[i], { uploadPath, branch, resultDir });
       bar.render({ completed: i + 1, total: total });
     }
+    await storage.setItem(tempVersion, Date.now());
     echo("\n");
     const list = files.map((i) => `https://${ossConfig.bucket}.${ossConfig.region}.aliyuncs.com/${uploadPath}/${branch ? `${branch}/` : ''}${i.split(`${resultDir}/`).pop()}`.replace(/\s/g, "")).join("\n");
     echo(list);
