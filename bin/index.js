@@ -198,7 +198,7 @@ async function init() {
     }
 
     const publishTimeKey = `publishTime-${branch}`;
-    // 上次发布的时间
+    //  上次发布的时间
     const lastPublishTime = +(projectConfig[publishTimeKey] ?? 0);
 
     log("开始build");
