@@ -196,6 +196,7 @@ async function init() {
     if (projectConfig.branch) {
       branch = projectConfig.branch;
     }
+    branch = branch.trim();
 
     const publishTimeKey = `publishTime-${branch}`;
     //  上次发布的时间
