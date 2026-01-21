@@ -220,10 +220,15 @@ async function init() {
     echo("\n");
     var bar = new ProgressBar("上传进度", 50);
     log(`准备上传到oss 总共${total}个文件`);
-    for (let i = 0; i < total; i++) {
-      await put(client, files[i], { uploadPath, branch, resultDir });
-      bar.render({ completed: i + 1, total: total });
-    }
+    let uploadCount = 0;
+    const uploadPromises = files.map((i) => {
+      return put(client, i, { uploadPath, branch, resultDir }).then(res => {
+        bar.render({ completed: ++uploadCount, total: total });
+        return res;
+      })
+    });
+    await Promise.all(uploadPromises);
+
     if (resultStr.match(/publishTime-[^\n]+/)) {
       fs.writeFileSync(accessKeyPath, resultStr.replace(/publishTime-[^\n]+/, `${publishTimeKey}=${Date.now()}`));
     } else {
