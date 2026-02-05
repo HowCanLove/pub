@@ -6,7 +6,7 @@ import path from "path";
 import shell from "shelljs";
 
 import { aseDecode, aseEncode } from "../utils/ase.js";
-import { log, put, readdir } from "../utils/index.js";
+import { log, put, readdir, asyncPool } from "../utils/index.js";
 import ProgressBar from "../utils/progress-bar.js";
 
 const { exec, echo } = shell;
@@ -203,7 +203,7 @@ async function init() {
     const lastPublishTime = +(projectConfig[publishTimeKey] ?? 0);
 
     log("开始build");
-    exec("npm run build");
+    // exec("npm run build");
     log("build结束");
 
     const files = [];
@@ -221,13 +221,16 @@ async function init() {
     var bar = new ProgressBar("上传进度", 50);
     log(`准备上传到oss 总共${total}个文件`);
     let uploadCount = 0;
-    const uploadPromises = files.map((i) => {
-      return put(client, i, { uploadPath, branch, resultDir }).then(res => {
-        bar.render({ completed: ++uploadCount, total: total });
-        return res;
-      })
-    });
-    await Promise.all(uploadPromises);
+    async function uploadWithLimit() {
+      await asyncPool(20, files, (filePath) => {
+        return put(client, filePath, { uploadPath, branch, resultDir }).then(res => {
+          bar.render({ completed: ++uploadCount, total: total });
+          return res;
+        })
+      });
+      console.log("限流并发上传完成");
+    }
+    await uploadWithLimit();
 
     if (resultStr.match(/publishTime-[^\n]+/)) {
       fs.writeFileSync(accessKeyPath, resultStr.replace(/publishTime-[^\n]+/, `${publishTimeKey}=${Date.now()}`));
