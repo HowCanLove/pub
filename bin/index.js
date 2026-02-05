@@ -203,7 +203,7 @@ async function init() {
     const lastPublishTime = +(projectConfig[publishTimeKey] ?? 0);
 
     log("开始build");
-    // exec("npm run build");
+    exec("npm run build");
     log("build结束");
 
     const files = [];
