@@ -1,11 +1,10 @@
 {
 	"name": "project-pub",
-	"version": "0.0.129",
+	"version": "0.0.130",
 	"description": "打包并将结果上传至oss",
 	"main": "index.js",
 	"scripts": {
-		"start": "node ./bin/index",
-		"pub": "node ./publishPub.js"
+		"start": "node ./bin/index"
 	},
 	"bin": {
 		"pub": "./bin/index.js"
@@ -14,11 +13,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"ali-oss": "^6.17.1",
-		"crypto": "^1.0.1",
-		"fs": "^0.0.1-security",
 		"inquirer": "^9.1.0",
-		"moment": "^2.29.4",
-		"path": "^0.12.7",
 		"shelljs": "^0.8.5",
 		"single-line-log": "^1.1.2"
 	},

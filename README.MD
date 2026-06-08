@@ -23,6 +23,32 @@ accessKeyId 与 accessKeySecret 会加密保存在本地。
 
 可以带参数发布，比如 pub d、pub o，就会生成对应的 .osskey-\* 的文件，执行命令会寻找对应的文件，不存在则会创建。
 
+## 设置密钥 pub key
+
+```bash
+pub key        # 设置 accessKeyId / accessKeySecret
+pub key d      # 针对 .ossKey-d 设置（带参数同发布命令）
+```
+
+执行后会先让你输入 accessKeyId / accessKeySecret，再选择保存到哪里（两种方式都会加密保存）：
+
+- **环境变量**：把 `ossPubAccessKeyId` / `ossPubAccessKeySecret` 写入当前 shell 的配置文件（自动识别 zsh / bash），值为加密后的密文。写入后需要 `source` 配置文件或重开终端才会生效；若没有写入权限，会把 export 语句打印出来让你手动复制。
+- **.ossKey 文件**：把密钥加密写入对应的 .ossKey。
+
+首次执行 `pub` 创建配置时，也会走同样的"设置密钥"流程；如果检测到环境变量里已有 `ossPubAccessKeyId` / `ossPubAccessKeySecret`，则自动跳过、不再要求输入。
+
+## 环境变量
+
+支持通过环境变量提供密钥，便于在 CI 或多个项目间复用，不必把密钥写进每个项目的 .ossKey：
+
+```bash
+# 值为加密后的密文，建议用 pub key 生成；如需手动维护请保持与 .ossKey 中相同的加密格式
+export ossPubAccessKeyId=<加密后的 accessKeyId>
+export ossPubAccessKeySecret=<加密后的 accessKeySecret>
+```
+
+取值优先级：**.ossKey 文件优先，其次环境变量**。即 .ossKey 里写了密钥就用 .ossKey 的，没有再回退到环境变量。
+
 ##版本更新时间
 0.0.9: 2022-08-22 16:15:49
 更新内容: 代码自动提交，遇到冲突自动暂停
